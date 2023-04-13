@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:title="@string/المكتبه"
+        android:icon="@drawable/ic_library_non"/>
+    <item
+        android:id="@+id/download"
+        android:title="@string/التحميل"
+        android:icon="@drawable/ic_download_non"/>
+    <item
+        android:id="@+id/bookmarks"
+        android:title="@string/المفضلة"
+        android:icon="@drawable/ic_bookmark_non"/>
+    <item
+        android:id="@+id/search"
+        android:title="@string/البحث"
+        android:icon="@drawable/ic_search_no"/>
+    <item
+        android:id="@+id/settings"
+        android:title="@string/الإعدادات"
+        android:icon="@drawable/ic_settings_non"/>
+</menu>

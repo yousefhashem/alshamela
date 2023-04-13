@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">المكتبة الشاملة</string>
+    <string name="المكتبه">المكتبة</string>
+    <string name="التحميل">التحميل</string>
+    <string name="المفضلة">المفضلة</string>
+    <string name="البحث">البحث</string>
+    <string name="الإعدادات">الإعدادات</string>
+    <string name="internet_connection_failed">فشل الاتصال بالانترنت</string>
+    <string name="please_check_it_and_try_again">برجا فحصه واعادة المحاولة</string>
+    <string name="yes">نعم</string>
+    <string name="want_to_close_the_app">هل تريد اغلاق التطبيق ؟</string>
+    <string name="no">لا</string>
+    <string name="down">تحميل</string>
+    <string name="tit">المكتبة الشاملة</string>
+    <string name="sear">البحث</string>
+    <string name="search">بحث</string>
+</resources>

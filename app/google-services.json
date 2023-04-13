@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "372894069190",
+    "project_id": "elshamel-8b448",
+    "storage_bucket": "elshamel-8b448.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372894069190:android:c7ea23cb70a0ca0c6a02c7",
+        "android_client_info": {
+          "package_name": "com.dzyacode.almaktabatalshaamila"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372894069190-of3ldlf8l8tv9okjvvcnn5rthj8bc4c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv1FRh3zu9x76deMBKYRdYu0H8C4ysoj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372894069190-of3ldlf8l8tv9okjvvcnn5rthj8bc4c0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
