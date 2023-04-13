@@ -51,6 +51,8 @@ public class SearchFragment extends Fragment {
     File direc;
     FolioReader folioReader;
 
+    String href;
+
     // Declare searchResultsList outside of any method
     private List<SearchResult> searchResultsList = new ArrayList<>();
 
@@ -126,13 +128,20 @@ public class SearchFragment extends Fragment {
                             String sentence = bookTex.substring(sentenceStart, sentenceEnd);
 
                             // Get the Resource that contains the text
+                            //Resource resource = book.getSpine().getResource(start);
                             Resource resource = book.getSpine().getResource(start);
+                            if (resource != null) {
+                                href = resource.getHref();
+                                // Do something with href...
+                            } else {
+                                // Handle the case when resource is null...
+                            }
 
                             // Get the TableOfContents of the book
                             TableOfContents tableOfContents = book.getTableOfContents();
 
                             // Find the location of the Resource in the book
-                            int location = tableOfContents.getAllUniqueResources().indexOf(resource.getHref());
+                            int location = tableOfContents.getAllUniqueResources().indexOf(href);
 
                             // Get the page number that contains the text
                             //int pageNumber = tableOfContents.getTocReferences().get(location).getPageNumber() + 1;
@@ -159,7 +168,8 @@ public class SearchFragment extends Fragment {
                 }
             };
             SearchResultsAdapter adapter = new SearchResultsAdapter(searchResultsList, listener);
-            searchResults.setAdapter((ListAdapter) adapter);
+            ArrayAdapter<SearchResult> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, searchResultsList);
+            searchResults.setAdapter(arrayAdapter);
 
             /*SearchResultsAdapter adapter = new SearchResultsAdapter(getActivity(), searchResultsList);
             searchResults.setAdapter(adapter);*/
