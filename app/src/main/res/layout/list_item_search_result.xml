@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/book_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="اسم الكتاب بشكل واضح"
+        android:textColor="@color/black"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@id/result_text"
+        android:textSize="16sp"
+        android:fontFamily="@font/changa"/>
+
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/book_title"
+        android:layout_height="wrap_content"
+        android:text="الجميله التي نبحث عنها في الكتب"
+        android:textColor="#4A4A4A"
+        android:maxLines="2"
+        app:layout_constraintBottom_toTopOf="@id/page_number"
+        android:textSize="14sp"
+        android:fontFamily="@font/avenir"/>
+
+    <TextView
+        android:id="@+id/page_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/avenir"
+        android:maxLines="1"
+        android:text="صفحه 45"
+        android:textColor="#4A4A4A"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/result_text" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,8 +7,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Environment;
 import android.text.Editable;
+import android.text.Html;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,6 +29,7 @@ import com.folioreader.FolioReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,8 +151,18 @@ public class SearchFragment extends Fragment {
             }
 
             // Set up the ListView adapter with the search results
-            SearchResultsAdapter adapter = new SearchResultsAdapter(getActivity(), searchResultsList);
-            searchResults.setAdapter(adapter);
+            List<SearchResult> searchResultsList = new ArrayList<>();
+            SearchResultsAdapter.SearchResultsListener listener = new SearchResultsAdapter.SearchResultsListener() {
+                @Override
+                public void onSearchResultClicked(SearchResult searchResult) {
+                    // Handle search result click here
+                }
+            };
+            SearchResultsAdapter adapter = new SearchResultsAdapter(searchResultsList, listener);
+            searchResults.setAdapter((ListAdapter) adapter);
+
+            /*SearchResultsAdapter adapter = new SearchResultsAdapter(getActivity(), searchResultsList);
+            searchResults.setAdapter(adapter);*/
         });
 
         searchResults.setOnItemClickListener((parent, view, position, id) -> {
@@ -171,7 +187,62 @@ public class SearchFragment extends Fragment {
         return root;
     }
 
-    private class SearchResultsAdapter extends ArrayAdapter<SearchResult> {
+
+    public static class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
+
+        private List<SearchResult> results;
+        private SearchResultsListener listener;
+
+        public SearchResultsAdapter(List<SearchResult> results, SearchResultsListener listener) {
+            this.results = results;
+            this.listener = listener;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_search_result, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            SearchResult result = results.get(position);
+            String text = Html.fromHtml(result.getSentence()).toString();
+            String[] words = text.split("\\s+");
+            String snippet = TextUtils.join(" ", Arrays.copyOfRange(words, 0, Math.min(3, words.length)));
+            holder.resultText.setText(snippet);
+            holder.bookTitle.setText(result.getBookName());
+            holder.pageNumber.setText(result.getPage());
+            holder.itemView.setOnClickListener(view -> listener.onSearchResultClicked(result));
+        }
+
+        @Override
+        public int getItemCount() {
+            return results.size();
+        }
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+
+            private TextView resultText;
+            private TextView bookTitle;
+            private TextView pageNumber;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                resultText = itemView.findViewById(R.id.result_text);
+                bookTitle = itemView.findViewById(R.id.book_title);
+                pageNumber = itemView.findViewById(R.id.page_number);
+            }
+        }
+
+        public interface SearchResultsListener {
+            void onSearchResultClicked(SearchResult result);
+        }
+    }
+
+
+    /*private class SearchResultsAdapter extends ArrayAdapter<SearchResult> {
         private final List<SearchResult> results;
 
         public SearchResultsAdapter(Context context, List<SearchResult> results) {
@@ -190,7 +261,7 @@ public class SearchFragment extends Fragment {
             textView.setText(result.toString());
             return convertView;
         }
-    }
+    }*/
 
 
     private static List<File> getEpubFiles(String directoryPath) {
@@ -211,11 +282,21 @@ public class SearchFragment extends Fragment {
         private final String bookName;
         private final int page;
         private final String sentence;
+        String fileName;
+        int pageNumber;
 
         public SearchResult(String bookName, int page, String sentence) {
             this.bookName = bookName;
             this.page = page;
             this.sentence = sentence;
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public int getPageNumber() {
+            return pageNumber;
         }
 
         public String getBookName() {
