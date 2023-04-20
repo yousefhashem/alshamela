@@ -7,12 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Environment;
 import android.text.Editable;
-import android.text.Html;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,7 +24,6 @@ import com.folioreader.FolioReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,8 +44,6 @@ public class SearchFragment extends Fragment {
 
     File direc;
     FolioReader folioReader;
-
-    String href;
 
     // Declare searchResultsList outside of any method
     private List<SearchResult> searchResultsList = new ArrayList<>();
@@ -128,20 +120,13 @@ public class SearchFragment extends Fragment {
                             String sentence = bookTex.substring(sentenceStart, sentenceEnd);
 
                             // Get the Resource that contains the text
-                            //Resource resource = book.getSpine().getResource(start);
                             Resource resource = book.getSpine().getResource(start);
-                            if (resource != null) {
-                                href = resource.getHref();
-                                // Do something with href...
-                            } else {
-                                // Handle the case when resource is null...
-                            }
 
                             // Get the TableOfContents of the book
                             TableOfContents tableOfContents = book.getTableOfContents();
 
                             // Find the location of the Resource in the book
-                            int location = tableOfContents.getAllUniqueResources().indexOf(href);
+                            int location = tableOfContents.getAllUniqueResources().indexOf(resource.getHref());
 
                             // Get the page number that contains the text
                             //int pageNumber = tableOfContents.getTocReferences().get(location).getPageNumber() + 1;
@@ -160,99 +145,16 @@ public class SearchFragment extends Fragment {
             }
 
             // Set up the ListView adapter with the search results
-            List<SearchResult> searchResultsList = new ArrayList<>();
-            SearchResultsAdapter.SearchResultsListener listener = new SearchResultsAdapter.SearchResultsListener() {
-                @Override
-                public void onSearchResultClicked(SearchResult searchResult) {
-                    // Handle search result click here
-                }
-            };
-            SearchResultsAdapter adapter = new SearchResultsAdapter(searchResultsList, listener);
-            ArrayAdapter<SearchResult> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, searchResultsList);
-            searchResults.setAdapter(arrayAdapter);
-
-            /*SearchResultsAdapter adapter = new SearchResultsAdapter(getActivity(), searchResultsList);
-            searchResults.setAdapter(adapter);*/
+            SearchResultsAdapter adapter = new SearchResultsAdapter(getActivity(), searchResultsList);
+            searchResults.setAdapter(adapter);
         });
 
-        searchResults.setOnItemClickListener((parent, view, position, id) -> {
-            // Get the selected search result
-            SearchResult selectedResult = searchResultsList.get(position);
 
-            // Get the file path of the selected search result
-            String filePath = direc.getAbsolutePath() + "/" + selectedResult.getFileName();
-
-            try {
-                // Read the epub file containing the selected search result
-                Book book = new EpubReader().readEpub(new FileInputStream(filePath));
-
-                // Load the epub file in the FolioReader
-                folioReader = FolioReader.get();
-                folioReader.openBook(String.valueOf(book), "/epubcfi(" + selectedResult.getPageNumber() + "!)" + selectedResult.getSentence());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
 
         return root;
     }
 
-
-    public static class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
-
-        private List<SearchResult> results;
-        private SearchResultsListener listener;
-
-        public SearchResultsAdapter(List<SearchResult> results, SearchResultsListener listener) {
-            this.results = results;
-            this.listener = listener;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_search_result, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            SearchResult result = results.get(position);
-            String text = Html.fromHtml(result.getSentence()).toString();
-            String[] words = text.split("\\s+");
-            String snippet = TextUtils.join(" ", Arrays.copyOfRange(words, 0, Math.min(3, words.length)));
-            holder.resultText.setText(snippet);
-            holder.bookTitle.setText(result.getBookName());
-            holder.pageNumber.setText(result.getPage());
-            holder.itemView.setOnClickListener(view -> listener.onSearchResultClicked(result));
-        }
-
-        @Override
-        public int getItemCount() {
-            return results.size();
-        }
-
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-
-            private TextView resultText;
-            private TextView bookTitle;
-            private TextView pageNumber;
-
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                resultText = itemView.findViewById(R.id.result_text);
-                bookTitle = itemView.findViewById(R.id.book_title);
-                pageNumber = itemView.findViewById(R.id.page_number);
-            }
-        }
-
-        public interface SearchResultsListener {
-            void onSearchResultClicked(SearchResult result);
-        }
-    }
-
-
-    /*private class SearchResultsAdapter extends ArrayAdapter<SearchResult> {
+    private class SearchResultsAdapter extends ArrayAdapter<SearchResult> {
         private final List<SearchResult> results;
 
         public SearchResultsAdapter(Context context, List<SearchResult> results) {
@@ -271,7 +173,7 @@ public class SearchFragment extends Fragment {
             textView.setText(result.toString());
             return convertView;
         }
-    }*/
+    }
 
 
     private static List<File> getEpubFiles(String directoryPath) {
@@ -292,21 +194,11 @@ public class SearchFragment extends Fragment {
         private final String bookName;
         private final int page;
         private final String sentence;
-        String fileName;
-        int pageNumber;
 
         public SearchResult(String bookName, int page, String sentence) {
             this.bookName = bookName;
             this.page = page;
             this.sentence = sentence;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public int getPageNumber() {
-            return pageNumber;
         }
 
         public String getBookName() {
